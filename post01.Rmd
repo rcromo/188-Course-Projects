@@ -1,0 +1,141 @@
+---
+title: "Post 01: Probability Models in R"
+subtitle: "Stat 133, Fall 2017"
+author: "Woo Sik (Lewis) Kim"
+output: html_document
+---
+___
+**Introduction**
+
+
+
+
+
+
+
+
+
+**Visualizing Probability in R: The Law of Large Numbers**
+
+One great thing about the advent of computers is that they allow us to visualize various mathematical properties in a clear, concise way, in ways that wasn't done before. Even  One such property that's very important in both Statistics and Mathematics is the Law of Large Numbers
+
+So, what is the Law of Large Numbers? In Probability Theory, the Law of Large Numbers, or "LLN", is a theory that states the average of the results obtained from a large number of trials in an experiment should be close to the expected value, and will become closer and closer to it as more trials are performed. So, what does this mean? It means that as our number of trials approach infinity, our average will become closer and closer to the true probability, or expected value.
+
+For instance, let's say we're flipping a fair, unbiased coin. What is our expected number of heads in, say, 2 coin flips? Since the probability of getting heads is 50%, our expected value should be 1 heads. But, even though 1 is our expected value, this may not be the case in reality. We could get 0 heads, or 2 heads. What if we flip 10 coins? Even though our expectation is 5 heads, we could get something much less, or much more. So, if we flip 10,000, 100,000, or even 1,000,000 coins, what's to say our observed number of heads is much more or less than the expected value of 50%? This is where LLN comes in. As we increase our number of trials, our 
+
+With R, we're actually able to visualize this phenomenon:
+
+
+
+
+As you can see, as we increase our number of trials, our number of heads approach its expected value: 50%. 
+
+**How Datasets Can Provide Us With Probabilities**
+
+At the core of 
+
+
+
+
+Using the NBA dataset we've been using throughout this course, let's see how we can use select() and filter() functions to calculate some basic probabilities.
+
+First, we import the ... data:
+
+```{r}
+
+require(readr)
+library(dplyr)
+dataset <- read_csv('data/nba2017-player-statistics.csv',
+                     col_types =
+                       list(
+                         Player = col_character(),
+                         Team = col_character(),
+                         Position = col_factor(c('C', 'PF','PG','SF','SG')),
+                         Experience = col_character(),
+                         Salary = col_double(),
+                         Rank = col_integer(),
+                         Age = col_integer(),
+                         GP = col_integer(),
+                         GS = col_integer(),
+                         MIN = col_integer(),
+                         FGM = col_integer(),
+                         FGA = col_integer(),
+                         Points3 = col_integer(),
+                         Points3_atts = col_integer(),
+                         Points2 = col_integer(),
+                         Points2_atts = col_integer(),
+                         FTM = col_integer(),
+                         FTA = col_integer(),
+                         OREB = col_integer(),
+                         DREB = col_integer(),
+                         AST = col_integer(),
+                         STL = col_integer(),
+                         BLK = col_integer(),
+                         TO = col_integer()
+                         ))
+```
+
+Now, let's pick out the players' salaries using the select() function from dplyr: 
+
+```{r}
+salaries <- select(dataset, Salary)
+```
+
+Using these 2 dataframes, let's write a basic function using a for loop that tells us what the probability of a player making over X dollars is. 
+
+```{r}
+salaryprob <- function(x) {
+  count <- 0
+  for (salary in salaries) {
+    if x > salary {
+      count <- count + 1
+    }
+  }
+  return count
+}
+```
+
+
+
+
+**Binomial Distribution**
+
+The binomial distribution is a discrete probability distribution. This means that 
+
+The binomial distribution follows the following formula:
+
+In R, this formula is equivalent to dbinom(k, n, p), where "k" is the number of successes, "n" is the number of trials, and "p" is the probability of success.
+
+Using this, let's apply it to the coin toss experiment. Let's say I toss 10 fair coins. What's the probability that I get 5 heads? Here, "k" is 5, since that's the number of "successes" we want: 5 heads. "n" is the total number of trials, which is 10. Finally, "p" is our probability of success, or the probability of getting heads, which is 0.5.
+
+```{r}
+# Probability of getting exactly 5 heads in 10 coin tosses (fair coin)
+prob <- dbinom(5, 10, 0.5)
+prob
+```
+
+Here, we can see that the probability of getting 5 heads in 10 coin tosses is approximately 
+
+We can use the binomial formula to solve much more exciting and complicated problems. For example, let's look at some sporting event. We have 2 teams playing: the Cats and the Dogs. Let's say that they are playing 20 games, and each time the Dogs win, you make $100. If you want to make 
+
+This problem uses a summation of the binomial formula:
+
+
+
+We need to sum up 
+
+To make at least $1000 from this game, the Dogs need to win at least 10 times ($100 x 10). 
+
+What does this formula tell us? It's 
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
